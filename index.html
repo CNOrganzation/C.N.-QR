@@ -1,41 +1,159 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C.N. QR - Scanner & Gestionnaire</title>
+<title>C.N. QR - V3</title>
 
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.6/JsBarcode.all.min.js"></script>
 
 <style>
-:root{--primary:#00adb5;--dark:#222831;--gray:#393e46;--light:#eee}
+:root{
+ --primary:#00adb5;
+ --dark:#222831;
+ --gray:#393e46;
+ --panel:#2d3238;
+ --light:#eeeeee;
+}
 *{box-sizing:border-box}
-body{font-family:Segoe UI,Tahoma,sans-serif;background:var(--dark);color:var(--light);margin:0;padding:18px;display:flex;justify-content:center;min-height:100vh}
-.container{max-width:560px;width:100%;background:var(--gray);padding:20px;border-radius:12px;box-shadow:0 4px 15px #0005;height:max-content}
+body{
+ font-family:Segoe UI,Tahoma,sans-serif;
+ background:var(--dark);
+ color:var(--light);
+ margin:0;
+ padding:16px;
+ display:flex;
+ justify-content:center;
+ min-height:100vh;
+}
+.container{
+ width:100%;
+ max-width:620px;
+ background:var(--gray);
+ padding:20px;
+ border-radius:14px;
+ box-shadow:0 4px 20px #0005;
+ height:max-content;
+}
 h1{text-align:center;color:var(--primary);margin-top:0}
-h2{font-size:1.15rem;margin:8px 0 12px}
-.tabs{display:flex;gap:8px;margin-bottom:18px}
-.tab-btn,.btn,.small-btn{border:0;border-radius:6px;cursor:pointer;font-weight:700;color:white}
-.tab-btn{flex:1;padding:12px;background:#2d3238}
+h2{font-size:19px}
+h3{font-size:16px}
+.tabs{
+ display:flex;
+ flex-wrap:wrap;
+ gap:7px;
+ margin-bottom:20px;
+}
+.tab-btn,.btn,.small-btn{
+ border:0;
+ border-radius:7px;
+ cursor:pointer;
+ font-weight:bold;
+ color:white;
+}
+.tab-btn{
+ flex:1;
+ min-width:90px;
+ padding:12px 7px;
+ background:#222831;
+}
 .tab-btn.active,.btn{background:var(--primary)}
-.panel{display:none}.panel.active{display:block}
-#reader{width:100%;border:2px solid var(--primary);border-radius:8px;overflow:hidden;min-height:40px}
-.box,.input-group,.saved-item{margin-top:14px;background:#2d3238;padding:14px;border-radius:8px}
-.btn{width:100%;padding:12px;margin-top:10px}
-.small-btn{background:#555;padding:8px 10px;margin-top:8px}
-input,select,textarea{width:100%;padding:11px;margin:7px 0 12px;border:1px solid #555;border-radius:6px;background:#222;color:white;font:inherit}
-label{font-size:.92rem;font-weight:600}
-.status{color:#a9eec2;font-size:.9rem;overflow-wrap:anywhere}
-.muted{color:#bbb;font-size:.85rem}
-#output-area{display:flex;justify-content:center;align-items:center;min-height:150px;margin-top:15px;overflow:hidden}
-#qrcode-canvas{display:none;max-width:100%;height:auto}
-#barcode-img{display:none;max-width:100%;height:auto}
-.saved-item{overflow-wrap:anywhere}
+.panel{display:none}
+.panel.active{display:block}
+.box,.input-group,.saved-item{
+ background:var(--panel);
+ padding:15px;
+ border-radius:9px;
+ margin-top:14px;
+}
+.btn{
+ width:100%;
+ padding:13px;
+ margin-top:9px;
+}
+.small-btn{
+ background:#555;
+ padding:9px 12px;
+ margin-top:8px;
+}
+.danger{background:#a83232}
+input,select,textarea{
+ width:100%;
+ padding:12px;
+ margin:7px 0 13px;
+ border:1px solid #555;
+ border-radius:7px;
+ background:#20242a;
+ color:white;
+ font:inherit;
+}
+label{font-size:14px;font-weight:bold}
+textarea{resize:vertical}
+.status{
+ color:#a9eec2;
+ font-size:14px;
+ overflow-wrap:anywhere;
+}
+.muted{color:#bbb;font-size:13px}
+#reader{
+ width:100%;
+ border:2px solid var(--primary);
+ border-radius:9px;
+ overflow:hidden;
+ min-height:40px;
+}
+#reader button{
+ background:var(--primary);
+ color:white;
+ border:0;
+ padding:9px;
+ border-radius:5px;
+}
+#reader select{background:#222;color:white}
+#output-area{
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ min-height:160px;
+ margin-top:15px;
+ overflow:hidden;
+}
+#qrcode-canvas{
+ display:none;
+ max-width:100%;
+ height:auto;
+}
+#barcode-img{
+ display:none;
+ max-width:100%;
+ height:auto;
+}
+.cn3-frame{
+ display:none;
+ background:#fff;
+ border:7px solid var(--primary);
+ border-radius:12px;
+ padding:12px;
+ max-width:100%;
+ overflow:hidden;
+}
+.cn3-frame svg{max-width:100%;height:auto}
+.cn3-title{
+ color:#087e83;
+ font-weight:900;
+ text-align:center;
+ letter-spacing:3px;
+ font-size:19px;
+}
+#scan-save-form{display:none}
 .saved-item strong{color:var(--primary)}
-.item-actions{display:flex;gap:8px;flex-wrap:wrap}
-.empty{color:#bbb;text-align:center;padding:15px}
+.saved-item p{overflow-wrap:anywhere}
+hr{border:0;border-top:1px solid #555;margin:18px 0}
+button:active{transform:scale(.99)}
+button:disabled{opacity:.5}
 a{color:#70e5eb}
 </style>
 </head>
@@ -44,6 +162,7 @@ a{color:#70e5eb}
 <div class="container">
 
 <h1>C.N. QR</h1>
+<p class="muted" style="text-align:center">Scanner • Générateur • Gestionnaire de codes</p>
 
 <div class="tabs">
 <button class="tab-btn active" id="scan-tab" onclick="switchTab('scan')">Scanner</button>
@@ -51,13 +170,17 @@ a{color:#70e5eb}
 <button class="tab-btn" id="saved-tab" onclick="switchTab('saved')">Mes codes</button>
 </div>
 
-<!-- SCANNER -->
+<!-- ================= SCANNER ================= -->
+
 <section id="scan-panel" class="panel active">
+
+<h2>Scanner un code</h2>
 
 <div id="reader"></div>
 
 <div class="box">
-<h2>Identification du code</h2>
+
+<h3>Identification du code</h3>
 
 <p id="result-text" class="status">En attente de scan...</p>
 <p id="result-type" class="muted"></p>
@@ -66,674 +189,1150 @@ a{color:#70e5eb}
 <div id="action-status" class="status"></div>
 <div id="action-link"></div>
 
+<button class="btn" onclick="showScanSaveForm()" id="scan-save-btn" disabled>
+Enregistrer ce code
+</button>
+
 <p id="scanner-status" class="muted">Initialisation du scanner...</p>
+
+</div>
+
+<!-- FORMULAIRE D'ENREGISTREMENT DEPUIS LE SCAN -->
+
+<div class="input-group" id="scan-save-form">
+
+<h2>Enregistrer le code scanné</h2>
+
+<label>Contenu</label>
+<input id="scan-code-value" readonly>
+
+<label>Nom du code</label>
+<input id="scan-code-name" placeholder="Ex : Mon site">
+
+<label>Utilité</label>
+<textarea id="scan-code-utility" rows="2" placeholder="À quoi sert ce code ?"></textarea>
+
+<label>Action automatique</label>
+<select id="scan-code-action" onchange="updateScanActionHint()">
+<option value="message">Afficher un message</option>
+<option value="open">Ouvrir un lien</option>
+<option value="search">Rechercher sur Google</option>
+<option value="copy">Copier le contenu</option>
+</select>
+
+<label id="scan-action-label">Message personnalisé</label>
+<input id="scan-action-value" placeholder="Message">
+
+<button class="btn" onclick="saveScannedCode()">Confirmer l'enregistrement</button>
+<button class="small-btn" onclick="hideScanSaveForm()">Annuler</button>
+
+<p id="scan-save-status" class="status"></p>
+
 </div>
 
 </section>
 
-<!-- CRÉATION -->
+<!-- ================= CREATION ================= -->
+
 <section id="create-panel" class="panel">
 
 <div class="input-group">
 
-<h2>Générer un code</h2>
+<h2>Générateur de codes</h2>
 
-<label for="code-type">Type de code</label>
+<label>Type de code</label>
 
 <select id="code-type" onchange="toggleInputHint()">
 <option value="qr">QR Code</option>
-<option value="code128">Code-barres Code 128</option>
-<option value="ean13">Code-barres EAN-13</option>
+<option value="code128">Code 128</option>
+<option value="code39">Code 39</option>
+<option value="ean13">EAN-13</option>
+<option value="cn3">CODE_CN3</option>
 </select>
 
-<label for="code-content">Contenu à encoder</label>
-
-<input id="code-content" placeholder="Texte, URL ou chiffres">
-
 <p id="input-hint" class="muted"></p>
+
+<label>Contenu à encoder</label>
+<input id="code-content" placeholder="Saisis ton contenu">
 
 <button class="btn" onclick="generateCode()">Générer</button>
 
 <p id="generate-status" class="status"></p>
 
 <div id="output-area">
+
 <canvas id="qrcode-canvas"></canvas>
+
 <svg id="barcode-img"></svg>
+
+<div class="cn3-frame" id="cn3-frame">
+<div class="cn3-title">C.N. QR</div>
+<div id="cn3-svg"></div>
+<div style="text-align:center;color:#087e83;font-weight:bold;font-size:12px">
+CODE_CN3 • CUSTOM FORMAT
+</div>
 </div>
 
-<hr style="border-color:#555;margin:18px 0">
+</div>
 
-<h2>Enregistrer ce code</h2>
+<button class="btn" id="download-btn" onclick="downloadGeneratedCode()" disabled>
+Télécharger le code dans mes fichiers
+</button>
 
-<p class="muted">Tu peux aussi enregistrer un code qui existe déjà, en saisissant exactement son contenu.</p>
+<hr>
 
-<label for="save-code">Valeur exacte du code</label>
-<input id="save-code" placeholder="Contenu qui sera lu au scan">
+<h2>Enregistrer dans ma bibliothèque</h2>
 
-<label for="save-name">Nom du code</label>
-<input id="save-name" placeholder="Ex. : Site du club">
+<label>Nom du code</label>
+<input id="create-name" placeholder="Ex : Code du club">
 
-<label for="save-utility">Utilité</label>
-<textarea id="save-utility" rows="2" placeholder="À quoi sert ce code ?"></textarea>
+<label>Utilité</label>
+<textarea id="create-utility" rows="2" placeholder="Utilité du code"></textarea>
 
-<label for="save-action">Action automatique au scan</label>
-
-<select id="save-action" onchange="updateActionHint()">
+<label>Action automatique après scan</label>
+<select id="create-action" onchange="updateCreateActionHint()">
 <option value="message">Afficher un message</option>
-<option value="open">Ouvrir un lien web</option>
+<option value="open">Ouvrir un lien</option>
 <option value="search">Rechercher sur Google</option>
 <option value="copy">Copier le contenu</option>
 </select>
 
-<label for="save-action-value" id="action-value-label">Message à afficher</label>
+<label id="create-action-label">Message personnalisé</label>
+<input id="create-action-value" placeholder="Message">
 
-<input id="save-action-value" placeholder="Message personnalisé">
+<button class="btn" onclick="saveCreatedCode()">Enregistrer dans ma bibliothèque</button>
 
-<p id="action-hint" class="muted">Le message apparaîtra après la lecture du code.</p>
-
-<button class="btn" onclick="saveCode()">Enregistrer le code</button>
-
-<p id="save-status" class="status" aria-live="polite"></p>
+<p id="create-save-status" class="status"></p>
 
 </div>
 </section>
 
-<!-- CODES ENREGISTRÉS -->
+<!-- ================= BIBLIOTHEQUE ================= -->
+
 <section id="saved-panel" class="panel">
 
 <div class="box">
 
-<h2>Mes codes enregistrés</h2>
+<h2>Ma bibliothèque</h2>
 
-<p class="muted">Les codes sont sauvegardés dans le stockage local de ce navigateur.</p>
+<p class="muted">
+Tous tes codes enregistrés apparaissent ici.
+</p>
 
 <div id="saved-list"></div>
 
+<hr>
+
+<h2>Gestion des fichiers</h2>
+
+<button class="btn" onclick="exportLibrary()">
+Exporter ma bibliothèque (.json)
+</button>
+
+<button class="btn" onclick="document.getElementById('import-file').click()">
+Importer une bibliothèque
+</button>
+
+<input type="file" id="import-file" accept=".json,application/json" style="display:none" onchange="importLibrary(event)">
+
+<p class="muted">
+L'export permet de conserver tes codes et de les transférer vers un autre appareil.
+</p>
+
 </div>
+
 </section>
 
 </div>
 
 <script>
 
+// ==================================================
+// CONFIGURATION
+// ==================================================
+
+const STORAGE_KEY="cnqr_v3_library";
+
 let scanner=null;
 let scannerStarting=false;
-let lastScanText="";
-let lastScanTime=0;
+let lastScanned="";
+let currentGenerated=null;
+let currentGeneratedType=null;
 
-const STORAGE_KEY="cnqr_saved_codes_v1";
+// ==================================================
+// BIBLIOTHEQUE
+// ==================================================
 
-// RÉCUPÉRER LES CODES
 function getSavedCodes(){
-  try{
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]");
-  }catch(e){
-    return [];
-  }
+
+ try{
+  const data=JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]");
+  return Array.isArray(data)?data:[];
+ }catch(e){
+  return [];
+ }
+
 }
 
-// SAUVEGARDER LES CODES
 function storeSavedCodes(codes){
-  localStorage.setItem(STORAGE_KEY,JSON.stringify(codes));
+
+ localStorage.setItem(STORAGE_KEY,JSON.stringify(codes));
+
 }
 
-// CHANGER D'ONGLET
+function saveToLibrary(entry){
+
+ const codes=getSavedCodes();
+
+ const index=codes.findIndex(c=>c.code===entry.code);
+
+ if(index>=0){
+  codes[index]={...entry,id:codes[index].id};
+ }else{
+  entry.id="CN"+Date.now().toString(36).toUpperCase();
+  codes.push(entry);
+ }
+
+ storeSavedCodes(codes);
+
+ return index>=0;
+
+}
+
+// ==================================================
+// NAVIGATION
+// ==================================================
+
 function switchTab(tab){
 
-  ["scan","create","saved"].forEach(name=>{
+ ["scan","create","saved"].forEach(name=>{
 
-    document.getElementById(name+"-panel").classList.toggle("active",name===tab);
+  document.getElementById(name+"-panel").classList.toggle("active",name===tab);
 
-    document.getElementById(name+"-tab").classList.toggle("active",name===tab);
+  document.getElementById(name+"-tab").classList.toggle("active",name===tab);
 
-  });
+ });
 
-  if(tab==="scan") startScanner();
-  else stopScanner();
+ if(tab==="scan")startScanner();
+ else stopScanner();
 
-  if(tab==="saved") renderSavedCodes();
+ if(tab==="saved")renderSavedCodes();
+
 }
 
-// DÉMARRER LE SCANNER
+// ==================================================
+// SCANNER
+// ==================================================
+
 async function startScanner(){
 
-  if(scanner||scannerStarting)return;
+ if(scanner||scannerStarting)return;
 
-  if(!window.Html5QrcodeScanner){
+ if(!window.Html5QrcodeScanner){
 
-    document.getElementById("scanner-status").textContent="Bibliothèque du scanner indisponible. Vérifie ta connexion.";
+  document.getElementById("scanner-status").textContent="Bibliothèque du scanner indisponible.";
 
-    return;
-  }
+  return;
 
-  scannerStarting=true;
+ }
 
-  document.getElementById("scanner-status").textContent="Préparation de la caméra...";
+ scannerStarting=true;
 
-  try{
+ try{
 
-    scanner=new Html5QrcodeScanner("reader",{
-      fps:10,
-      qrbox:{width:240,height:240},
-      rememberLastUsedCamera:true
-    },false);
+  scanner=new Html5QrcodeScanner("reader",{
+   fps:10,
+   qrbox:{width:240,height:240},
+   rememberLastUsedCamera:true
+  },false);
 
-    scanner.render(onScanSuccess,onScanFailure);
+  scanner.render(onScanSuccess,onScanFailure);
 
-    document.getElementById("scanner-status").textContent="Autorise l'accès à la caméra pour scanner.";
+  document.getElementById("scanner-status").textContent=
+   "Autorise l'accès à la caméra pour commencer.";
 
-  }catch(e){
+ }catch(e){
 
-    scanner=null;
-
-    document.getElementById("scanner-status").textContent="Démarrage impossible : "+e.message;
-
-  }finally{
-
-    scannerStarting=false;
-
-  }
-}
-
-// ARRÊTER LE SCANNER
-async function stopScanner(){
-
-  if(!scanner)return;
-
-  const old=scanner;
   scanner=null;
 
-  try{
-    await old.clear();
-  }catch(e){
-    console.warn(e);
-  }
+  document.getElementById("scanner-status").textContent=
+   "Erreur : "+e.message;
+
+ }finally{
+
+  scannerStarting=false;
+
+ }
+
 }
 
-// IDENTIFICATION AUTOMATIQUE
+async function stopScanner(){
+
+ if(!scanner)return;
+
+ const old=scanner;
+ scanner=null;
+
+ try{
+  await old.clear();
+ }catch(e){
+  console.warn(e);
+ }
+
+}
+
+// ==================================================
+// IDENTIFICATION
+// ==================================================
+
+function identifyCode(value,format){
+
+ if(value.startsWith("CN3-")){
+  return "CODE_CN3";
+ }
+
+ if(format==="QR_CODE"||format==="QR_CODE_MODEL_2"){
+  return "QR Code";
+ }
+
+ if(format==="CODE_39"){
+  return "Code 39";
+ }
+
+ if(format==="CODE_128"){
+  return "Code 128 / CODE_CN3";
+ }
+
+ if(format==="EAN_13"){
+  return "EAN-13";
+ }
+
+ return format||"Format inconnu";
+
+}
+
+// ==================================================
+// RESULTAT DU SCAN
+// ==================================================
+
 function onScanSuccess(decodedText,decodedResult){
 
-  const now=Date.now();
+ const now=Date.now();
 
-  if(decodedText===lastScanText&&now-lastScanTime<2500)return;
+ if(decodedText===lastScanned&&now-(window.lastScanTime||0)<2500)return;
 
-  lastScanText=decodedText;
-  lastScanTime=now;
+ lastScanned=decodedText;
+ window.lastScanTime=now;
 
-  document.getElementById("result-text").textContent=decodedText;
+ const format=decodedResult?.result?.format?.formatName||"";
 
-  const format=decodedResult?.result?.format?.formatName||"Format non précisé";
+ document.getElementById("result-text").textContent=decodedText;
 
-  document.getElementById("result-type").textContent="Type détecté : "+format;
+ document.getElementById("result-type").textContent=
+  "Identification : "+identifyCode(decodedText,format);
 
-  document.getElementById("identified-info").innerHTML="";
-  document.getElementById("action-link").innerHTML="";
+ document.getElementById("scan-code-value").value=decodedText;
 
-  const match=getSavedCodes().find(item=>item.code===decodedText);
+ document.getElementById("scan-save-btn").disabled=false;
 
-  if(match){
+ document.getElementById("scan-save-form").style.display="none";
 
-    document.getElementById("identified-info").innerHTML=
-      "<p><strong>Code reconnu : "+escapeHTML(match.name)+"</strong></p><p>"+escapeHTML(match.utility||"Aucune utilité précisée")+"</p>";
+ const match=getSavedCodes().find(c=>c.code===decodedText);
 
-    runSavedAction(match,decodedText);
+ const info=document.getElementById("identified-info");
 
-  }else{
+ info.innerHTML="";
 
-    document.getElementById("action-status").textContent="Code non enregistré. Tu peux l'ajouter dans l'onglet « Créer ».";
+ document.getElementById("action-link").innerHTML="";
 
-  }
+ if(match){
+
+  info.innerHTML=
+   "<p><strong>✓ Code reconnu : "+escapeHTML(match.name)+"</strong></p>"+
+   "<p>"+escapeHTML(match.utility||"Aucune utilité renseignée")+"</p>";
+
+  runSavedAction(match,decodedText);
+
+ }else{
+
+  info.innerHTML="<p class='muted'>Ce code n'est pas encore enregistré.</p>";
+
+  document.getElementById("action-status").textContent=
+   "Tu peux maintenant l'enregistrer avec le bouton ci-dessus.";
+
+ }
+
 }
 
 function onScanFailure(error){}
 
-// EXÉCUTER UNE ACTION
+// ==================================================
+// ENREGISTRER DEPUIS LE SCANNER
+// ==================================================
+
+function showScanSaveForm(){
+
+ if(!lastScanned)return;
+
+ document.getElementById("scan-code-value").value=lastScanned;
+
+ document.getElementById("scan-save-form").style.display="block";
+
+ document.getElementById("scan-code-name").focus();
+
+}
+
+function hideScanSaveForm(){
+
+ document.getElementById("scan-save-form").style.display="none";
+
+}
+
+function updateScanActionHint(){
+
+ const action=document.getElementById("scan-code-action").value;
+
+ const label=document.getElementById("scan-action-label");
+
+ const input=document.getElementById("scan-action-value");
+
+ const config={
+  message:["Message personnalisé","Bienvenue !"],
+  open:["Adresse du lien","https://exemple.fr"],
+  search:["Texte recherché","Mon produit"],
+  copy:["Texte à copier (facultatif)","Laisser vide pour copier le code"]
+ };
+
+ label.textContent=config[action][0];
+ input.placeholder=config[action][1];
+
+}
+
+function saveScannedCode(){
+
+ const code=document.getElementById("scan-code-value").value;
+
+ const name=document.getElementById("scan-code-name").value.trim();
+
+ const utility=document.getElementById("scan-code-utility").value.trim();
+
+ const action=document.getElementById("scan-code-action").value;
+
+ const actionValue=document.getElementById("scan-action-value").value.trim();
+
+ const status=document.getElementById("scan-save-status");
+
+ if(!code||!name){
+
+  status.textContent="Le nom du code est obligatoire.";
+
+  return;
+
+ }
+
+ if(action==="open"&&!/^https?:\/\//i.test(actionValue)){
+
+  status.textContent="Adresse invalide : utilise http:// ou https://.";
+
+  return;
+
+ }
+
+ try{
+
+  saveToLibrary({code,name,utility,action,actionValue});
+
+  status.textContent="Code enregistré avec succès !";
+
+  document.getElementById("identified-info").innerHTML=
+   "<p><strong>✓ "+escapeHTML(name)+"</strong></p>";
+
+  renderSavedCodes();
+
+ }catch(e){
+
+  status.textContent="Impossible de sauvegarder ce code.";
+
+ }
+
+}
+
+// ==================================================
+// ACTIONS AUTOMATIQUES
+// ==================================================
+
 function runSavedAction(item,scannedValue){
 
-  const status=document.getElementById("action-status");
-  const linkArea=document.getElementById("action-link");
+ const status=document.getElementById("action-status");
 
-  status.textContent="Action : "+item.action;
+ const area=document.getElementById("action-link");
 
-  // MESSAGE
-  if(item.action==="message"){
+ status.textContent="Code reconnu : "+item.name;
 
-    status.textContent=item.actionValue||"Code reconnu.";
+ if(item.action==="message"){
 
-  }
+  status.textContent=item.actionValue||"Code reconnu !";
 
-  // OUVRIR UN LIEN
-  else if(item.action==="open"){
+ }
 
-    let url=item.actionValue||scannedValue;
+ else if(item.action==="open"){
 
-    if(!/^https?:\/\//i.test(url)){
+  const url=item.actionValue||scannedValue;
 
-      status.textContent="Action impossible : le lien doit commencer par https:// ou http://.";
+  if(!/^https?:\/\//i.test(url)){
 
-      return;
-    }
+   status.textContent="Adresse web invalide.";
 
-    status.textContent="Lien associé au code :";
-
-    const a=document.createElement("a");
-
-    a.href=url;
-    a.target="_blank";
-    a.rel="noopener noreferrer";
-    a.textContent="Ouvrir "+url;
-
-    linkArea.appendChild(a);
-
-    const opened=window.open(url,"_blank","noopener,noreferrer");
-
-    if(!opened){
-
-      status.textContent="Le navigateur a bloqué l'ouverture automatique. Utilise le lien ci-dessous.";
-
-    }
+   return;
 
   }
 
-  // RECHERCHE GOOGLE
-  else if(item.action==="search"){
+  addActionLink(url,"Ouvrir le lien");
 
-    const query=item.actionValue||scannedValue;
+  status.textContent="Lien associé au code.";
 
-    const url="https://www.google.com/search?q="+encodeURIComponent(query);
+ }
 
-    status.textContent="Recherche associée au code :";
+ else if(item.action==="search"){
 
-    const a=document.createElement("a");
+  const query=item.actionValue||scannedValue;
 
-    a.href=url;
-    a.target="_blank";
-    a.rel="noopener noreferrer";
-    a.textContent="Voir la recherche Google";
+  const url="https://www.google.com/search?q="+encodeURIComponent(query);
 
-    linkArea.appendChild(a);
+  addActionLink(url,"Rechercher sur Google");
 
-    const opened=window.open(url,"_blank","noopener,noreferrer");
+  status.textContent="Recherche associée au code.";
 
-    if(!opened){
+ }
 
-      status.textContent="Ouverture automatique bloquée. Utilise le lien ci-dessous.";
+ else if(item.action==="copy"){
 
-    }
+  const value=item.actionValue||scannedValue;
 
-  }
+  if(navigator.clipboard&&window.isSecureContext){
 
-  // COPIER LE CONTENU
-  else if(item.action==="copy"){
+   navigator.clipboard.writeText(value).then(()=>{
 
-    const value=item.actionValue||scannedValue;
+    status.textContent="Contenu copié !";
 
-    if(navigator.clipboard&&window.isSecureContext){
+   }).catch(()=>{
 
-      navigator.clipboard.writeText(value).then(()=>{
+    status.textContent="Copie non autorisée.";
 
-        status.textContent="Contenu copié !";
-
-      }).catch(()=>{
-
-        status.textContent="Copie non autorisée par le navigateur.";
-
-      });
-
-    }else{
-
-      status.textContent="Copie automatique indisponible dans ce contexte sécurisé.";
-
-    }
-
-  }
-
-}
-
-// SÉCURISER L'AFFICHAGE HTML
-function escapeHTML(value){
-
-  return String(value).replace(/[&<>"']/g,char=>({
-
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
-
-  }[char]));
-
-}
-
-// AIDE À LA SAISIE
-function toggleInputHint(){
-
-  const type=document.getElementById("code-type").value;
-
-  document.getElementById("input-hint").textContent=
-
-    type==="ean13"?"EAN-13 : exactement 13 chiffres.":
-
-    type==="code128"?"Code 128 : lettres et chiffres acceptés.":
-
-    "QR Code : texte, URL ou autres informations.";
-
-}
-
-// GÉNÉRER UN CODE
-async function generateCode(){
-
-  const type=document.getElementById("code-type").value;
-
-  const content=document.getElementById("code-content").value.trim();
-
-  const canvas=document.getElementById("qrcode-canvas");
-
-  const svg=document.getElementById("barcode-img");
-
-  const status=document.getElementById("generate-status");
-
-  canvas.style.display="none";
-  svg.style.display="none";
-
-  status.textContent="";
-
-  if(!content){
-
-    status.textContent="Saisis un contenu avant de générer.";
-
-    return;
-  }
-
-  // QR CODE
-  if(type==="qr"){
-
-    if(!window.QRCode){
-
-      status.textContent="Bibliothèque QR indisponible.";
-
-      return;
-    }
-
-    try{
-
-      await QRCode.toCanvas(canvas,content,{
-        width:220,
-        margin:2
-      });
-
-      canvas.style.display="block";
-
-      status.textContent="QR Code généré.";
-
-      document.getElementById("save-code").value=content;
-
-    }catch(e){
-
-      status.textContent="Erreur de génération du QR Code.";
-
-      console.error(e);
-
-    }
-
-  }
-
-  // CODE-BARRES
-  else{
-
-    if(!window.JsBarcode){
-
-      status.textContent="Bibliothèque de codes-barres indisponible.";
-
-      return;
-    }
-
-    if(type==="ean13"&&!/^\d{13}$/.test(content)){
-
-      status.textContent="EAN-13 nécessite exactement 13 chiffres.";
-
-      return;
-    }
-
-    try{
-
-      JsBarcode(svg,content,{
-
-        format:type==="code128"?"CODE128":"EAN13",
-
-        lineColor:"#fff",
-        background:"#2d3238",
-        width:2,
-        height:80,
-        displayValue:true,
-        margin:10
-
-      });
-
-      svg.style.display="block";
-
-      status.textContent="Code-barres généré.";
-
-      document.getElementById("save-code").value=content;
-
-    }catch(e){
-
-      status.textContent="Format invalide pour ce type de code.";
-
-      console.error(e);
-
-    }
-
-  }
-
-}
-
-// CONFIGURATION DE L'ACTION
-function updateActionHint(){
-
-  const action=document.getElementById("save-action").value;
-
-  const label=document.getElementById("action-value-label");
-
-  const input=document.getElementById("save-action-value");
-
-  const hint=document.getElementById("action-hint");
-
-  const config={
-
-    message:[
-      "Message à afficher",
-      "Ex. : Bienvenue !",
-      "Le message apparaîtra après la lecture du code."
-    ],
-
-    open:[
-      "Adresse du lien",
-      "https://exemple.fr",
-      "Seules les adresses http:// et https:// sont autorisées."
-    ],
-
-    search:[
-      "Texte à rechercher",
-      "Ex. : Référence du produit",
-      "Le texte sera recherché sur Google après le scan."
-    ],
-
-    copy:[
-      "Texte à copier (facultatif)",
-      "Laisser vide pour copier le code lu",
-      "Le texte sera copié dans le presse-papiers."
-    ]
-
-  }[action];
-
-  label.textContent=config[0];
-
-  input.placeholder=config[1];
-
-  hint.textContent=config[2];
-
-}
-
-// ENREGISTRER UN CODE
-function saveCode(){
-
-  const code=document.getElementById("save-code").value.trim();
-
-  const name=document.getElementById("save-name").value.trim();
-
-  const utility=document.getElementById("save-utility").value.trim();
-
-  const action=document.getElementById("save-action").value;
-
-  const actionValue=document.getElementById("save-action-value").value.trim();
-
-  const status=document.getElementById("save-status");
-
-  if(!code||!name){
-
-    status.textContent="Le contenu du code et son nom sont obligatoires.";
-
-    return;
-  }
-
-  if(action==="open"&&!/^https?:\/\//i.test(actionValue)){
-
-    status.textContent="Entre une adresse commençant par http:// ou https://.";
-
-    return;
-  }
-
-  const codes=getSavedCodes();
-
-  const existing=codes.findIndex(item=>item.code===code);
-
-  const entry={
-    code,
-    name,
-    utility,
-    action,
-    actionValue
-  };
-
-  if(existing>=0){
-
-    codes[existing]=entry;
+   });
 
   }else{
 
-    codes.push(entry);
+   status.textContent="Copie automatique indisponible.";
 
   }
 
-  try{
-
-    storeSavedCodes(codes);
-
-    status.textContent=existing>=0?"Code mis à jour !":"Code enregistré !";
-
-    renderSavedCodes();
-
-  }catch(e){
-
-    status.textContent="Impossible de sauvegarder : stockage du navigateur indisponible.";
-
-  }
+ }
 
 }
 
-// AFFICHER LES CODES ENREGISTRÉS
-function renderSavedCodes(){
+function addActionLink(url,label){
 
-  const list=document.getElementById("saved-list");
+ const a=document.createElement("a");
 
-  const codes=getSavedCodes();
+ a.href=url;
+ a.target="_blank";
+ a.rel="noopener noreferrer";
+ a.textContent=label;
 
-  list.innerHTML="";
+ document.getElementById("action-link").appendChild(a);
 
-  if(!codes.length){
+}
 
-    list.innerHTML='<p class="empty">Aucun code enregistré pour le moment.</p>';
+// ==================================================
+// SECURITE HTML
+// ==================================================
 
-    return;
+function escapeHTML(value){
+
+ return String(value).replace(/[&<>"']/g,c=>({
+
+  "&":"&amp;",
+  "<":"&lt;",
+  ">":"&gt;",
+  '"':"&quot;",
+  "'":"&#39;"
+
+ })[c]);
+
+}
+
+// ==================================================
+// AIDE GENERATEUR
+// ==================================================
+
+function toggleInputHint(){
+
+ const type=document.getElementById("code-type").value;
+
+ const hints={
+
+  qr:"QR Code : texte, URL et caractères variés.",
+
+  code128:"Code 128 : lettres, chiffres et caractères courants.",
+
+  code39:"Code 39 : lettres majuscules, chiffres et certains symboles.",
+
+  ean13:"EAN-13 : exactement 13 chiffres.",
+
+  cn3:"CODE_CN3 : uniquement A-Z, 0-9 et tirets. Exemple : CN3-ABC-2026."
+
+ };
+
+ document.getElementById("input-hint").textContent=hints[type];
+
+}
+
+// ==================================================
+// GENERATION
+// ==================================================
+
+function resetOutput(){
+
+ document.getElementById("qrcode-canvas").style.display="none";
+
+ document.getElementById("barcode-img").style.display="none";
+
+ document.getElementById("cn3-frame").style.display="none";
+
+ document.getElementById("download-btn").disabled=true;
+
+ currentGenerated=null;
+
+ currentGeneratedType=null;
+
+}
+
+async function generateCode(){
+
+ const type=document.getElementById("code-type").value;
+
+ const content=document.getElementById("code-content").value.trim();
+
+ const status=document.getElementById("generate-status");
+
+ resetOutput();
+
+ status.textContent="";
+
+ if(!content){
+
+  status.textContent="Saisis un contenu avant de générer.";
+
+  return;
+
+ }
+
+ try{
+
+  if(type==="qr"){
+
+   if(!window.QRCode)throw Error("Bibliothèque QR indisponible.");
+
+   const canvas=document.getElementById("qrcode-canvas");
+
+   await QRCode.toCanvas(canvas,content,{
+    width:240,
+    margin:3,
+    color:{dark:"#000000",light:"#ffffff"}
+   });
+
+   canvas.style.display="block";
+
+   currentGenerated=canvas;
+
+   currentGeneratedType="png";
+
   }
 
-  codes.forEach((item,index)=>{
+  else{
 
-    const card=document.createElement("div");
+   if(!window.JsBarcode)throw Error("Bibliothèque de codes-barres indisponible.");
 
-    card.className="saved-item";
+   if(type==="ean13"&&!/^\d{13}$/.test(content)){
 
-    const title=document.createElement("strong");
+    throw Error("EAN-13 nécessite exactement 13 chiffres.");
 
-    title.textContent=item.name;
+   }
 
-    const code=document.createElement("p");
+   if(type==="cn3"&&!/^[A-Z0-9-]+$/.test(content)){
 
-    code.textContent="Code : "+item.code;
+    throw Error("CODE_CN3 accepte uniquement les majuscules, les chiffres et les tirets.");
 
-    const utility=document.createElement("p");
+   }
 
-    utility.textContent="Utilité : "+(item.utility||"Non précisée");
+   if(type==="cn3"&&content.length>40){
 
-    const action=document.createElement("p");
+    throw Error("CODE_CN3 est limité à 40 caractères.");
 
-    action.textContent="Action : "+({
+   }
 
-      message:"Afficher un message",
-      open:"Ouvrir un lien",
-      search:"Recherche Google",
-      copy:"Copier"
+   if(type==="cn3"&&content.startsWith("CN3-")){
 
-    }[item.action]||item.action);
+    // Le préfixe CN3- est réservé à l'identification du format.
+    // On le conserve comme donnée encodée.
 
-    const del=document.createElement("button");
+   }
 
-    del.className="small-btn";
+   const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
 
-    del.textContent="Supprimer";
+   const format={
+    code128:"CODE128",
+    code39:"CODE39",
+    ean13:"EAN13",
+    cn3:"CODE128"
+   }[type];
 
-    del.onclick=()=>deleteCode(index);
+   JsBarcode(svg,content,{
 
-    card.append(title,code,utility,action,del);
+    format:format,
 
-    list.appendChild(card);
+    lineColor:type==="cn3"?"#087e83":"#ffffff",
+
+    background:"#ffffff",
+
+    width:type==="cn3"?3:2,
+
+    height:type==="cn3"?90:85,
+
+    displayValue:true,
+
+    fontOptions:"bold",
+
+    font:"monospace",
+
+    margin:12
+
+   });
+
+   if(type==="cn3"){
+
+    const frame=document.getElementById("cn3-frame");
+
+    const target=document.getElementById("cn3-svg");
+
+    target.innerHTML="";
+
+    target.appendChild(svg);
+
+    frame.style.display="block";
+
+    currentGenerated=svg.cloneNode(true);
+
+    currentGeneratedType="svg";
+
+   }else{
+
+    const output=document.getElementById("barcode-img");
+
+    output.innerHTML=svg.innerHTML;
+
+    output.setAttribute("viewBox",svg.getAttribute("viewBox"));
+
+    output.setAttribute("width",svg.getAttribute("width"));
+
+    output.setAttribute("height",svg.getAttribute("height"));
+
+    output.style.display="block";
+
+    currentGenerated=output;
+
+    currentGeneratedType="svg";
+
+   }
+
+  }
+
+  document.getElementById("download-btn").disabled=false;
+
+  document.getElementById("save-code").value=content;
+
+  status.textContent="Code généré avec succès !";
+
+ }catch(e){
+
+  status.textContent=e.message||"Erreur de génération.";
+
+  console.error(e);
+
+ }
+
+}
+
+// ==================================================
+// TELECHARGEMENT DES CODES
+// ==================================================
+
+function downloadBlob(blob,filename){
+
+ const url=URL.createObjectURL(blob);
+
+ const a=document.createElement("a");
+
+ a.href=url;
+ a.download=filename;
+
+ document.body.appendChild(a);
+
+ a.click();
+
+ a.remove();
+
+ setTimeout(()=>URL.revokeObjectURL(url),1500);
+
+}
+
+function downloadGeneratedCode(){
+
+ if(!currentGenerated)return;
+
+ const content=document.getElementById("code-content").value.trim();
+
+ const type=document.getElementById("code-type").value;
+
+ const safeName=content.replace(/[^a-zA-Z0-9_-]/g,"_").slice(0,40)||"code";
+
+ if(currentGeneratedType==="png"){
+
+  currentGenerated.toBlob(blob=>{
+
+   if(blob)downloadBlob(blob,safeName+".png");
+
+  },"image/png");
+
+ }else{
+
+  const serializer=new XMLSerializer();
+
+  const svgString=serializer.serializeToString(currentGenerated);
+
+  const blob=new Blob([svgString],{
+
+   type:"image/svg+xml;charset=utf-8"
 
   });
 
+  downloadBlob(blob,safeName+".svg");
+
+ }
+
 }
 
-// SUPPRIMER UN CODE
+// ==================================================
+// CONFIGURATION ACTION CREATION
+// ==================================================
+
+function updateCreateActionHint(){
+
+ const action=document.getElementById("create-action").value;
+
+ const config={
+
+  message:["Message personnalisé","Bienvenue !"],
+
+  open:["Adresse du lien","https://exemple.fr"],
+
+  search:["Texte à rechercher","Mon produit"],
+
+  copy:["Texte à copier (facultatif)","Laisser vide pour copier le code"]
+
+ }[action];
+
+ document.getElementById("create-action-label").textContent=config[0];
+
+ document.getElementById("create-action-value").placeholder=config[1];
+
+}
+
+// ==================================================
+// ENREGISTREMENT CODE CREE
+// ==================================================
+
+function saveCreatedCode(){
+
+ const code=document.getElementById("code-content").value.trim();
+
+ const name=document.getElementById("create-name").value.trim();
+
+ const utility=document.getElementById("create-utility").value.trim();
+
+ const action=document.getElementById("create-action").value;
+
+ const actionValue=document.getElementById("create-action-value").value.trim();
+
+ const status=document.getElementById("create-save-status");
+
+ if(!code||!name){
+
+  status.textContent="Génère d'abord un code et indique son nom.";
+
+  return;
+
+ }
+
+ if(!currentGenerated){
+
+  status.textContent="Génère le code avant de l'enregistrer.";
+
+  return;
+
+ }
+
+ if(action==="open"&&!/^https?:\/\//i.test(actionValue)){
+
+  status.textContent="Entre une adresse http:// ou https:// valide.";
+
+  return;
+
+ }
+
+ try{
+
+  const replaced=saveToLibrary({
+
+   code,
+   name,
+   utility,
+   action,
+   actionValue,
+   type:document.getElementById("code-type").value
+
+  });
+
+  status.textContent=replaced?"Code mis à jour !":"Code ajouté à la bibliothèque !";
+
+ }catch(e){
+
+  status.textContent="Erreur de sauvegarde.";
+
+ }
+
+}
+
+// ==================================================
+// AFFICHER BIBLIOTHEQUE
+// ==================================================
+
+function renderSavedCodes(){
+
+ const list=document.getElementById("saved-list");
+
+ const codes=getSavedCodes();
+
+ list.innerHTML="";
+
+ if(!codes.length){
+
+  list.innerHTML='<p class="muted">Aucun code enregistré.</p>';
+
+  return;
+
+ }
+
+ codes.forEach((item,index)=>{
+
+  const card=document.createElement("div");
+
+  card.className="saved-item";
+
+  const title=document.createElement("strong");
+
+  title.textContent=item.name;
+
+  const code=document.createElement("p");
+
+  code.textContent="Contenu : "+item.code;
+
+  const utility=document.createElement("p");
+
+  utility.textContent="Utilité : "+(item.utility||"Non précisée");
+
+  const type=document.createElement("p");
+
+  type.textContent="Type : "+(item.type||"Code scanné");
+
+  const action=document.createElement("p");
+
+  action.textContent="Action : "+({
+
+   message:"Message",
+   open:"Ouvrir un lien",
+   search:"Recherche Google",
+   copy:"Copier"
+
+  }[item.action]||"Non précisée");
+
+  const del=document.createElement("button");
+
+  del.className="small-btn danger";
+
+  del.textContent="Supprimer";
+
+  del.onclick=()=>deleteCode(index);
+
+  const edit=document.createElement("button");
+
+  edit.className="small-btn";
+
+  edit.textContent="Modifier";
+
+  edit.onclick=()=>editCode(index);
+
+  card.append(title,code,utility,type,action,edit,del);
+
+  list.appendChild(card);
+
+ });
+
+}
+
+// ==================================================
+// MODIFIER / SUPPRIMER
+// ==================================================
+
+function editCode(index){
+
+ const item=getSavedCodes()[index];
+
+ if(!item)return;
+
+ switchTab("create");
+
+ document.getElementById("code-content").value=item.code;
+
+ document.getElementById("create-name").value=item.name;
+
+ document.getElementById("create-utility").value=item.utility||"";
+
+ document.getElementById("create-action").value=item.action||"message";
+
+ document.getElementById("create-action-value").value=item.actionValue||"";
+
+ updateCreateActionHint();
+
+ document.getElementById("create-save-status").textContent=
+  "Modifie les informations puis enregistre à nouveau.";
+
+}
+
 function deleteCode(index){
 
-  if(!confirm("Supprimer ce code enregistré ?"))return;
+ if(!confirm("Supprimer définitivement ce code de ta bibliothèque ?"))return;
 
-  const codes=getSavedCodes();
+ const codes=getSavedCodes();
 
-  codes.splice(index,1);
+ codes.splice(index,1);
 
-  storeSavedCodes(codes);
+ storeSavedCodes(codes);
 
-  renderSavedCodes();
+ renderSavedCodes();
 
 }
 
+// ==================================================
+// EXPORTER BIBLIOTHEQUE
+// ==================================================
+
+function exportLibrary(){
+
+ const data=getSavedCodes();
+
+ const blob=new Blob([JSON.stringify(data,null,2)],{
+
+  type:"application/json"
+
+ });
+
+ downloadBlob(blob,"CN_QR_bibliotheque.json");
+
+}
+
+// ==================================================
+// IMPORTER BIBLIOTHEQUE
+// ==================================================
+
+function importLibrary(event){
+
+ const file=event.target.files[0];
+
+ if(!file)return;
+
+ const reader=new FileReader();
+
+ reader.onload=()=>{
+
+  try{
+
+   const imported=JSON.parse(reader.result);
+
+   if(!Array.isArray(imported))throw Error("Format invalide.");
+
+   const valid=imported.filter(item=>
+    item&&
+    typeof item.code==="string"&&
+    typeof item.name==="string"&&
+    ["message","open","search","copy"].includes(item.action)
+   );
+
+   if(!valid.length)throw Error("Aucun code valide.");
+
+   const current=getSavedCodes();
+
+   valid.forEach(item=>{
+
+    const index=current.findIndex(c=>c.code===item.code);
+
+    if(index>=0)current[index]={...current[index],...item};
+    else current.push(item);
+
+   });
+
+   storeSavedCodes(current);
+
+   renderSavedCodes();
+
+   alert(valid.length+" code(s) importé(s).");
+
+  }catch(e){
+
+   alert("Impossible d'importer : "+e.message);
+
+  }
+
+  event.target.value="";
+
+ };
+
+ reader.readAsText(file);
+
+}
+
+// ==================================================
 // INITIALISATION
+// ==================================================
+
 window.addEventListener("load",()=>{
 
-  toggleInputHint();
+ toggleInputHint();
 
-  updateActionHint();
+ updateScanActionHint();
 
-  startScanner();
+ updateCreateActionHint();
 
-  renderSavedCodes();
+ renderSavedCodes();
+
+ startScanner();
 
 });
 
 window.addEventListener("beforeunload",()=>{
 
-  if(scanner)scanner.clear().catch(()=>{});
+ if(scanner)scanner.clear().catch(()=>{});
 
 });
 
