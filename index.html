@@ -1,288 +1,743 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C.N. QR - Scanner & Générateur</title>
-    <!-- Bibliothèques pour le scan et la génération -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
-    <script src="https://cloudflare.com"></script>
-    <script src="https://cloudflare.com"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C.N. QR - Scanner & Gestionnaire</title>
 
-    
-    <style>
-        :root {
-            --primary: #00adb5;
-            --dark: #222831;
-            --gray: #393e46;
-            --light: #eeeeee;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--dark);
-            color: var(--light);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .container {
-            max-width: 500px;
-            width: 100%;
-            background: var(--gray);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            box-sizing: border-box;
-        }
-        h1 {
-            text-align: center;
-            color: var(--primary);
-            margin-top: 0;
-        }
-        .tabs {
-            display: flex;
-            margin-bottom: 20px;
-            gap: 10px;
-        }
-        .tab-btn {
-            flex: 1;
-            padding: 12px;
-            background: #2d3238;
-            border: none;
-            color: white;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .tab-btn.active {
-            background: var(--primary);
-        }
-        .panel {
-            display: none;
-        }
-        .panel.active {
-            display: block;
-        }
-        #reader {
-            width: 100%;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 2px solid var(--primary) !important;
-        }
-        .result-box, .input-group {
-            margin-top: 15px;
-            background: #2d3238;
-            padding: 15px;
-            border-radius: 8px;
-        }
-        .btn {
-            width: 100%;
-            padding: 12px;
-            background: var(--primary);
-            border: none;
-            color: white;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        input, select {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            border-radius: 6px;
-            border: 1px solid #555;
-            background: #222;
-            color: white;
-            box-sizing: border-box;
-        }
-        #output-area {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 20px;
-            min-height: 150px;
-            justify-content: center;
-        }
-        #barcode-img {
-            max-width: 100%;
-            display: none;
-        }
-        #qrcode-canvas {
-            display: none;
-        }
-    </style>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.6/JsBarcode.all.min.js"></script>
+
+<style>
+:root{--primary:#00adb5;--dark:#222831;--gray:#393e46;--light:#eee}
+*{box-sizing:border-box}
+body{font-family:Segoe UI,Tahoma,sans-serif;background:var(--dark);color:var(--light);margin:0;padding:18px;display:flex;justify-content:center;min-height:100vh}
+.container{max-width:560px;width:100%;background:var(--gray);padding:20px;border-radius:12px;box-shadow:0 4px 15px #0005;height:max-content}
+h1{text-align:center;color:var(--primary);margin-top:0}
+h2{font-size:1.15rem;margin:8px 0 12px}
+.tabs{display:flex;gap:8px;margin-bottom:18px}
+.tab-btn,.btn,.small-btn{border:0;border-radius:6px;cursor:pointer;font-weight:700;color:white}
+.tab-btn{flex:1;padding:12px;background:#2d3238}
+.tab-btn.active,.btn{background:var(--primary)}
+.panel{display:none}.panel.active{display:block}
+#reader{width:100%;border:2px solid var(--primary);border-radius:8px;overflow:hidden;min-height:40px}
+.box,.input-group,.saved-item{margin-top:14px;background:#2d3238;padding:14px;border-radius:8px}
+.btn{width:100%;padding:12px;margin-top:10px}
+.small-btn{background:#555;padding:8px 10px;margin-top:8px}
+input,select,textarea{width:100%;padding:11px;margin:7px 0 12px;border:1px solid #555;border-radius:6px;background:#222;color:white;font:inherit}
+label{font-size:.92rem;font-weight:600}
+.status{color:#a9eec2;font-size:.9rem;overflow-wrap:anywhere}
+.muted{color:#bbb;font-size:.85rem}
+#output-area{display:flex;justify-content:center;align-items:center;min-height:150px;margin-top:15px;overflow:hidden}
+#qrcode-canvas{display:none;max-width:100%;height:auto}
+#barcode-img{display:none;max-width:100%;height:auto}
+.saved-item{overflow-wrap:anywhere}
+.saved-item strong{color:var(--primary)}
+.item-actions{display:flex;gap:8px;flex-wrap:wrap}
+.empty{color:#bbb;text-align:center;padding:15px}
+a{color:#70e5eb}
+</style>
 </head>
+
 <body>
+<div class="container">
 
-    <div class="container">
-        <h1>C.N. QR</h1>
-        
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('scan')">Scanner</button>
-            <button class="tab-btn" onclick="switchTab('create')">Créer</button>
-        </div>
+<h1>C.N. QR</h1>
 
-        <!-- PANNEAU SCANNER -->
-        <div id="scan-panel" class="panel active">
-            <div id="reader"></div>
-            <div class="result-box">
-                <h3>Dernier Scan :</h3>
-                <p id="result-text" style="word-break: break-all; color: #a9eec2;">En attente de scan...</p>
-                <p id="result-type" style="font-size: 0.85em; color: #aaa;"></p>
-                <div id="action-status" style="font-weight: bold; color: var(--primary); margin-top: 5px;"></div>
-            </div>
-        </div>
+<div class="tabs">
+<button class="tab-btn active" id="scan-tab" onclick="switchTab('scan')">Scanner</button>
+<button class="tab-btn" id="create-tab" onclick="switchTab('create')">Créer</button>
+<button class="tab-btn" id="saved-tab" onclick="switchTab('saved')">Mes codes</button>
+</div>
 
-        <!-- PANNEAU CRÉATION -->
-        <div id="create-panel" class="panel">
-            <div class="input-group">
-                <label for="code-type">Type de code :</label>
-                <select id="code-type" onchange="toggleInputHint()">
-                    <option value="qr">QR Code (Texte, URL...)</option>
-                    <option value="code128">Code-barres (Code 128 - Alphanumérique)</option>
-                    <option value="ean13">Code-barres (EAN-13 - 13 chiffres obligatoires)</option>
-                </select>
+<!-- SCANNER -->
+<section id="scan-panel" class="panel active">
 
-                <label for="code-content">Contenu à encoder :</label>
-                <input type="text" id="code-content" placeholder="Entrez votre texte ou URL ici">
-                <span id="input-hint" style="font-size: 0.8em; color: #bbb;"></span>
+<div id="reader"></div>
 
-                <button class="btn" onclick="generateCode()">Générer</button>
-            </div>
+<div class="box">
+<h2>Identification du code</h2>
 
-            <div id="output-area">
-                <canvas id="qrcode-canvas"></canvas>
-                <svg id="barcode-img"></svg>
-            </div>
-        </div>
-    </div>
+<p id="result-text" class="status">En attente de scan...</p>
+<p id="result-type" class="muted"></p>
 
-    <script>
-        let html5QrcodeScanner = null;
+<div id="identified-info"></div>
+<div id="action-status" class="status"></div>
+<div id="action-link"></div>
 
-        // Gestion des Onglets
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
-            
-            if(tab === 'scan') {
-                document.querySelectorAll('.tab-btn')[0].classList.add('active');
-                document.getElementById('scan-panel').classList.add('active');
-                startScanner();
-            } else {
-                document.querySelectorAll('.tab-btn')[1].classList.add('active');
-                document.getElementById('create-panel').classList.add('active');
-                if(html5QrcodeScanner) {
-                    html5QrcodeScanner.clear();
-                }
-            }
-        }
+<p id="scanner-status" class="muted">Initialisation du scanner...</p>
+</div>
 
-        // Démarrage du Scanner automatique
-        function startScanner() {
-            if (!html5QrcodeScanner) {
-                html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
-                    fps: 15, 
-                    qrbox: { width: 250, height: 250 },
-                    rememberLastUsedCamera: true
-                });
-            }
-            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-        }
+</section>
 
-        // Action automatique lors d'un scan réussi
-        function onScanSuccess(decodedText, decodedResult) {
-            document.getElementById('result-text').innerText = decodedText;
-            const format = decodedResult.result.format.formatName;
-            document.getElementById('result-type').innerText = "Format détecté : " + format;
-            
-            const actionStatus = document.getElementById('action-status');
+<!-- CRÉATION -->
+<section id="create-panel" class="panel">
 
-            // Analyse et Action automatique
-            if (decodedText.startsWith('http://') || decodedText.startsWith('https://')) {
-                actionStatus.innerText = "Action : Redirection URL...";
-                setTimeout(() => { window.open(decodedText, '_blank'); }, 1000);
-            } else if (!isNaN(decodedText) && decodedText.length >= 8) {
-                // Si c'est une suite de chiffres (ex: produit), recherche Google
-                actionStatus.innerText = "Action : Recherche du produit sur Google...";
-                setTimeout(() => { window.open(`https://google.com{decodedText}`, '_blank'); }, 1000);
-            } else {
-                // Texte classique : Copie dans le presse-papier
-                navigator.clipboard.writeText(decodedText).then(() => {
-                    actionStatus.innerText = "Action : Texte copié dans le presse-papier !";
-                }).catch(() => {
-                    actionStatus.innerText = "Action : Impossible de copier automatiquement.";
-                });
-            }
-        }
+<div class="input-group">
 
-        function onScanFailure(error) {
-            // Échecs d'analyse silencieux pour ne pas surcharger la console
-        }
+<h2>Générer un code</h2>
 
-        // Aide à la saisie pour la création
-        function toggleInputHint() {
-            const type = document.getElementById('code-type').value;
-            const hint = document.getElementById('input-hint');
-            if (type === 'ean13') {
-                hint.innerText = "⚠️ Nécessite exactement 13 chiffres.";
-            } else if (type === 'code128') {
-                hint.innerText = "Lettres et chiffres acceptés.";
-            } else {
-                hint.innerText = "";
-            }
-        }
+<label for="code-type">Type de code</label>
 
-        // Génération des QR et Code-barres
-        function generateCode() {
-            const type = document.getElementById('code-type').value;
-            const content = document.getElementById('code-content').value.trim();
-            const qrCanvas = document.getElementById('qrcode-canvas');
-            const barcodeSvg = document.getElementById('barcode-img');
+<select id="code-type" onchange="toggleInputHint()">
+<option value="qr">QR Code</option>
+<option value="code128">Code-barres Code 128</option>
+<option value="ean13">Code-barres EAN-13</option>
+</select>
 
-            // Reset l'affichage
-            qrCanvas.style.display = 'none';
-            barcodeSvg.style.display = 'none';
+<label for="code-content">Contenu à encoder</label>
 
-            if(!content) {
-                alert("Veuillez saisir du contenu à encoder.");
-                return;
-            }
+<input id="code-content" placeholder="Texte, URL ou chiffres">
 
-            if(type === 'qr') {
-                qrCanvas.style.display = 'block';
-                QRCode.toCanvas(qrCanvas, content, { width: 200, margin: 2 }, function (error) {
-                    if (error) alert("Erreur lors de la génération du QR Code");
-                });
-            } else {
-                if(type === 'ean13' && (!/^\d{13}$/.test(content))) {
-                    alert("Pour le format EAN-13, vous devez entrer exactement 13 chiffres.");
-                    return;
-                }
-                barcodeSvg.style.display = 'block';
-                try {
-                    JsBarcode("#barcode-img", content, {
-                format: type.toUpperCase(), // 16 espaces
-                lineColor: "#ffffff",       // 16 espaces
-                background: "transparent",  // 16 espaces
-                width: 2,                   // 16 espaces
-                height: 80,                 // 16 espaces
-                displayValue: true,         // 16 espaces
-                fontOptions: "bold",        // 16 espaces
-                font: "monospace"           // 16 espaces
-            });                             // 12 espaces
-        } catch (e) {                       // 8 espaces
-            alert("Erreur de format : Vérifiez que vos données correspondent au type de code sélectionné."); // 12 espaces
-        }                                   // 8 espaces
-    }                                       // 4 espaces
-}                                           // 0 espace (aligné sur le bord gauche)
+<p id="input-hint" class="muted"></p>
 
-// Lancement au chargement du script         // 0 espace
-window.onload = () => {                     // 0 espace
-    startScanner();                         // 4 espaces
-    toggleInputHint();                      // 4 espaces
-};                                          // 0 espace
+<button class="btn" onclick="generateCode()">Générer</button>
+
+<p id="generate-status" class="status"></p>
+
+<div id="output-area">
+<canvas id="qrcode-canvas"></canvas>
+<svg id="barcode-img"></svg>
+</div>
+
+<hr style="border-color:#555;margin:18px 0">
+
+<h2>Enregistrer ce code</h2>
+
+<p class="muted">Tu peux aussi enregistrer un code qui existe déjà, en saisissant exactement son contenu.</p>
+
+<label for="save-code">Valeur exacte du code</label>
+<input id="save-code" placeholder="Contenu qui sera lu au scan">
+
+<label for="save-name">Nom du code</label>
+<input id="save-name" placeholder="Ex. : Site du club">
+
+<label for="save-utility">Utilité</label>
+<textarea id="save-utility" rows="2" placeholder="À quoi sert ce code ?"></textarea>
+
+<label for="save-action">Action automatique au scan</label>
+
+<select id="save-action" onchange="updateActionHint()">
+<option value="message">Afficher un message</option>
+<option value="open">Ouvrir un lien web</option>
+<option value="search">Rechercher sur Google</option>
+<option value="copy">Copier le contenu</option>
+</select>
+
+<label for="save-action-value" id="action-value-label">Message à afficher</label>
+
+<input id="save-action-value" placeholder="Message personnalisé">
+
+<p id="action-hint" class="muted">Le message apparaîtra après la lecture du code.</p>
+
+<button class="btn" onclick="saveCode()">Enregistrer le code</button>
+
+<p id="save-status" class="status" aria-live="polite"></p>
+
+</div>
+</section>
+
+<!-- CODES ENREGISTRÉS -->
+<section id="saved-panel" class="panel">
+
+<div class="box">
+
+<h2>Mes codes enregistrés</h2>
+
+<p class="muted">Les codes sont sauvegardés dans le stockage local de ce navigateur.</p>
+
+<div id="saved-list"></div>
+
+</div>
+</section>
+
+</div>
+
+<script>
+
+let scanner=null;
+let scannerStarting=false;
+let lastScanText="";
+let lastScanTime=0;
+
+const STORAGE_KEY="cnqr_saved_codes_v1";
+
+// RÉCUPÉRER LES CODES
+function getSavedCodes(){
+  try{
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]");
+  }catch(e){
+    return [];
+  }
+}
+
+// SAUVEGARDER LES CODES
+function storeSavedCodes(codes){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(codes));
+}
+
+// CHANGER D'ONGLET
+function switchTab(tab){
+
+  ["scan","create","saved"].forEach(name=>{
+
+    document.getElementById(name+"-panel").classList.toggle("active",name===tab);
+
+    document.getElementById(name+"-tab").classList.toggle("active",name===tab);
+
+  });
+
+  if(tab==="scan") startScanner();
+  else stopScanner();
+
+  if(tab==="saved") renderSavedCodes();
+}
+
+// DÉMARRER LE SCANNER
+async function startScanner(){
+
+  if(scanner||scannerStarting)return;
+
+  if(!window.Html5QrcodeScanner){
+
+    document.getElementById("scanner-status").textContent="Bibliothèque du scanner indisponible. Vérifie ta connexion.";
+
+    return;
+  }
+
+  scannerStarting=true;
+
+  document.getElementById("scanner-status").textContent="Préparation de la caméra...";
+
+  try{
+
+    scanner=new Html5QrcodeScanner("reader",{
+      fps:10,
+      qrbox:{width:240,height:240},
+      rememberLastUsedCamera:true
+    },false);
+
+    scanner.render(onScanSuccess,onScanFailure);
+
+    document.getElementById("scanner-status").textContent="Autorise l'accès à la caméra pour scanner.";
+
+  }catch(e){
+
+    scanner=null;
+
+    document.getElementById("scanner-status").textContent="Démarrage impossible : "+e.message;
+
+  }finally{
+
+    scannerStarting=false;
+
+  }
+}
+
+// ARRÊTER LE SCANNER
+async function stopScanner(){
+
+  if(!scanner)return;
+
+  const old=scanner;
+  scanner=null;
+
+  try{
+    await old.clear();
+  }catch(e){
+    console.warn(e);
+  }
+}
+
+// IDENTIFICATION AUTOMATIQUE
+function onScanSuccess(decodedText,decodedResult){
+
+  const now=Date.now();
+
+  if(decodedText===lastScanText&&now-lastScanTime<2500)return;
+
+  lastScanText=decodedText;
+  lastScanTime=now;
+
+  document.getElementById("result-text").textContent=decodedText;
+
+  const format=decodedResult?.result?.format?.formatName||"Format non précisé";
+
+  document.getElementById("result-type").textContent="Type détecté : "+format;
+
+  document.getElementById("identified-info").innerHTML="";
+  document.getElementById("action-link").innerHTML="";
+
+  const match=getSavedCodes().find(item=>item.code===decodedText);
+
+  if(match){
+
+    document.getElementById("identified-info").innerHTML=
+      "<p><strong>Code reconnu : "+escapeHTML(match.name)+"</strong></p><p>"+escapeHTML(match.utility||"Aucune utilité précisée")+"</p>";
+
+    runSavedAction(match,decodedText);
+
+  }else{
+
+    document.getElementById("action-status").textContent="Code non enregistré. Tu peux l'ajouter dans l'onglet « Créer ».";
+
+  }
+}
+
+function onScanFailure(error){}
+
+// EXÉCUTER UNE ACTION
+function runSavedAction(item,scannedValue){
+
+  const status=document.getElementById("action-status");
+  const linkArea=document.getElementById("action-link");
+
+  status.textContent="Action : "+item.action;
+
+  // MESSAGE
+  if(item.action==="message"){
+
+    status.textContent=item.actionValue||"Code reconnu.";
+
+  }
+
+  // OUVRIR UN LIEN
+  else if(item.action==="open"){
+
+    let url=item.actionValue||scannedValue;
+
+    if(!/^https?:\/\//i.test(url)){
+
+      status.textContent="Action impossible : le lien doit commencer par https:// ou http://.";
+
+      return;
+    }
+
+    status.textContent="Lien associé au code :";
+
+    const a=document.createElement("a");
+
+    a.href=url;
+    a.target="_blank";
+    a.rel="noopener noreferrer";
+    a.textContent="Ouvrir "+url;
+
+    linkArea.appendChild(a);
+
+    const opened=window.open(url,"_blank","noopener,noreferrer");
+
+    if(!opened){
+
+      status.textContent="Le navigateur a bloqué l'ouverture automatique. Utilise le lien ci-dessous.";
+
+    }
+
+  }
+
+  // RECHERCHE GOOGLE
+  else if(item.action==="search"){
+
+    const query=item.actionValue||scannedValue;
+
+    const url="https://www.google.com/search?q="+encodeURIComponent(query);
+
+    status.textContent="Recherche associée au code :";
+
+    const a=document.createElement("a");
+
+    a.href=url;
+    a.target="_blank";
+    a.rel="noopener noreferrer";
+    a.textContent="Voir la recherche Google";
+
+    linkArea.appendChild(a);
+
+    const opened=window.open(url,"_blank","noopener,noreferrer");
+
+    if(!opened){
+
+      status.textContent="Ouverture automatique bloquée. Utilise le lien ci-dessous.";
+
+    }
+
+  }
+
+  // COPIER LE CONTENU
+  else if(item.action==="copy"){
+
+    const value=item.actionValue||scannedValue;
+
+    if(navigator.clipboard&&window.isSecureContext){
+
+      navigator.clipboard.writeText(value).then(()=>{
+
+        status.textContent="Contenu copié !";
+
+      }).catch(()=>{
+
+        status.textContent="Copie non autorisée par le navigateur.";
+
+      });
+
+    }else{
+
+      status.textContent="Copie automatique indisponible dans ce contexte sécurisé.";
+
+    }
+
+  }
+
+}
+
+// SÉCURISER L'AFFICHAGE HTML
+function escapeHTML(value){
+
+  return String(value).replace(/[&<>"']/g,char=>({
+
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+
+  }[char]));
+
+}
+
+// AIDE À LA SAISIE
+function toggleInputHint(){
+
+  const type=document.getElementById("code-type").value;
+
+  document.getElementById("input-hint").textContent=
+
+    type==="ean13"?"EAN-13 : exactement 13 chiffres.":
+
+    type==="code128"?"Code 128 : lettres et chiffres acceptés.":
+
+    "QR Code : texte, URL ou autres informations.";
+
+}
+
+// GÉNÉRER UN CODE
+async function generateCode(){
+
+  const type=document.getElementById("code-type").value;
+
+  const content=document.getElementById("code-content").value.trim();
+
+  const canvas=document.getElementById("qrcode-canvas");
+
+  const svg=document.getElementById("barcode-img");
+
+  const status=document.getElementById("generate-status");
+
+  canvas.style.display="none";
+  svg.style.display="none";
+
+  status.textContent="";
+
+  if(!content){
+
+    status.textContent="Saisis un contenu avant de générer.";
+
+    return;
+  }
+
+  // QR CODE
+  if(type==="qr"){
+
+    if(!window.QRCode){
+
+      status.textContent="Bibliothèque QR indisponible.";
+
+      return;
+    }
+
+    try{
+
+      await QRCode.toCanvas(canvas,content,{
+        width:220,
+        margin:2
+      });
+
+      canvas.style.display="block";
+
+      status.textContent="QR Code généré.";
+
+      document.getElementById("save-code").value=content;
+
+    }catch(e){
+
+      status.textContent="Erreur de génération du QR Code.";
+
+      console.error(e);
+
+    }
+
+  }
+
+  // CODE-BARRES
+  else{
+
+    if(!window.JsBarcode){
+
+      status.textContent="Bibliothèque de codes-barres indisponible.";
+
+      return;
+    }
+
+    if(type==="ean13"&&!/^\d{13}$/.test(content)){
+
+      status.textContent="EAN-13 nécessite exactement 13 chiffres.";
+
+      return;
+    }
+
+    try{
+
+      JsBarcode(svg,content,{
+
+        format:type==="code128"?"CODE128":"EAN13",
+
+        lineColor:"#fff",
+        background:"#2d3238",
+        width:2,
+        height:80,
+        displayValue:true,
+        margin:10
+
+      });
+
+      svg.style.display="block";
+
+      status.textContent="Code-barres généré.";
+
+      document.getElementById("save-code").value=content;
+
+    }catch(e){
+
+      status.textContent="Format invalide pour ce type de code.";
+
+      console.error(e);
+
+    }
+
+  }
+
+}
+
+// CONFIGURATION DE L'ACTION
+function updateActionHint(){
+
+  const action=document.getElementById("save-action").value;
+
+  const label=document.getElementById("action-value-label");
+
+  const input=document.getElementById("save-action-value");
+
+  const hint=document.getElementById("action-hint");
+
+  const config={
+
+    message:[
+      "Message à afficher",
+      "Ex. : Bienvenue !",
+      "Le message apparaîtra après la lecture du code."
+    ],
+
+    open:[
+      "Adresse du lien",
+      "https://exemple.fr",
+      "Seules les adresses http:// et https:// sont autorisées."
+    ],
+
+    search:[
+      "Texte à rechercher",
+      "Ex. : Référence du produit",
+      "Le texte sera recherché sur Google après le scan."
+    ],
+
+    copy:[
+      "Texte à copier (facultatif)",
+      "Laisser vide pour copier le code lu",
+      "Le texte sera copié dans le presse-papiers."
+    ]
+
+  }[action];
+
+  label.textContent=config[0];
+
+  input.placeholder=config[1];
+
+  hint.textContent=config[2];
+
+}
+
+// ENREGISTRER UN CODE
+function saveCode(){
+
+  const code=document.getElementById("save-code").value.trim();
+
+  const name=document.getElementById("save-name").value.trim();
+
+  const utility=document.getElementById("save-utility").value.trim();
+
+  const action=document.getElementById("save-action").value;
+
+  const actionValue=document.getElementById("save-action-value").value.trim();
+
+  const status=document.getElementById("save-status");
+
+  if(!code||!name){
+
+    status.textContent="Le contenu du code et son nom sont obligatoires.";
+
+    return;
+  }
+
+  if(action==="open"&&!/^https?:\/\//i.test(actionValue)){
+
+    status.textContent="Entre une adresse commençant par http:// ou https://.";
+
+    return;
+  }
+
+  const codes=getSavedCodes();
+
+  const existing=codes.findIndex(item=>item.code===code);
+
+  const entry={
+    code,
+    name,
+    utility,
+    action,
+    actionValue
+  };
+
+  if(existing>=0){
+
+    codes[existing]=entry;
+
+  }else{
+
+    codes.push(entry);
+
+  }
+
+  try{
+
+    storeSavedCodes(codes);
+
+    status.textContent=existing>=0?"Code mis à jour !":"Code enregistré !";
+
+    renderSavedCodes();
+
+  }catch(e){
+
+    status.textContent="Impossible de sauvegarder : stockage du navigateur indisponible.";
+
+  }
+
+}
+
+// AFFICHER LES CODES ENREGISTRÉS
+function renderSavedCodes(){
+
+  const list=document.getElementById("saved-list");
+
+  const codes=getSavedCodes();
+
+  list.innerHTML="";
+
+  if(!codes.length){
+
+    list.innerHTML='<p class="empty">Aucun code enregistré pour le moment.</p>';
+
+    return;
+  }
+
+  codes.forEach((item,index)=>{
+
+    const card=document.createElement("div");
+
+    card.className="saved-item";
+
+    const title=document.createElement("strong");
+
+    title.textContent=item.name;
+
+    const code=document.createElement("p");
+
+    code.textContent="Code : "+item.code;
+
+    const utility=document.createElement("p");
+
+    utility.textContent="Utilité : "+(item.utility||"Non précisée");
+
+    const action=document.createElement("p");
+
+    action.textContent="Action : "+({
+
+      message:"Afficher un message",
+      open:"Ouvrir un lien",
+      search:"Recherche Google",
+      copy:"Copier"
+
+    }[item.action]||item.action);
+
+    const del=document.createElement("button");
+
+    del.className="small-btn";
+
+    del.textContent="Supprimer";
+
+    del.onclick=()=>deleteCode(index);
+
+    card.append(title,code,utility,action,del);
+
+    list.appendChild(card);
+
+  });
+
+}
+
+// SUPPRIMER UN CODE
+function deleteCode(index){
+
+  if(!confirm("Supprimer ce code enregistré ?"))return;
+
+  const codes=getSavedCodes();
+
+  codes.splice(index,1);
+
+  storeSavedCodes(codes);
+
+  renderSavedCodes();
+
+}
+
+// INITIALISATION
+window.addEventListener("load",()=>{
+
+  toggleInputHint();
+
+  updateActionHint();
+
+  startScanner();
+
+  renderSavedCodes();
+
+});
+
+window.addEventListener("beforeunload",()=>{
+
+  if(scanner)scanner.clear().catch(()=>{});
+
+});
+
+</script>
+
+</body>
+</html>
